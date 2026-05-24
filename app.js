@@ -208,7 +208,9 @@ async function guardarNaCloud(dados) {
   try {
     const res = await supabaseFetch('/rest/v1/registos', {
       method: 'POST',
-      headers: { 'Prefer': 'resolution=merge-duplicates' },
+      headers: {
+        'Prefer': 'resolution=merge-duplicates,return=minimal'
+      },
       body: JSON.stringify({ user_id: currentUser.id, data: hojeStr(), ...dados })
     });
     if (res.ok) { mostrarSave('Guardado ✓'); dadosAlterados = false; }
