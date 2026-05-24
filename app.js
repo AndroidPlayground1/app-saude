@@ -1,8 +1,8 @@
 // ============================================================
 // CONFIGURAÇÃO SUPABASE
 // ============================================================
-const SUPABASE_URL = 'https://kdzuglvipxxhhadhwfxw.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtkenVnbHZpcHh4aGhhZGh3Znh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2NDA3MTEsImV4cCI6MjA5NTIxNjcxMX0.NoXaQWaHLdTi3hdZFvHdI-W4sZHYaHzpNT2TwpSTRPc';
+const SUPABASE_URL = 'https://bewegowquzzqkwkpmogn.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJld2Vnb3dxdXp6cWt3a3Btb2duIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2NDYzNTYsImV4cCI6MjA5NTIyMjM1Nn0.7poMALZ5Z5Qt5QYypCGI5wVrKRS5Vt3oxYTcHTQ9ya0';
 
 // ============================================================
 // ESTADO
@@ -110,17 +110,6 @@ async function fazerLogin() {
   btn.disabled = true; btn.textContent = 'A entrar...';
 
   try {
-    // 1. Verificar se username existe na tabela
-    const checkRes = await fetch(`${SUPABASE_URL}/rest/v1/utilizadores?username=eq.${username}&select=username`, {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-    });
-    const existing = await checkRes.json();
-    if (!existing || existing.length === 0) {
-      err.textContent = 'Utilizador não encontrado.';
-      return;
-    }
-
-    // 2. Autenticar
     const email = username + '@bemestar.app';
     const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
       method: 'POST',
@@ -129,10 +118,9 @@ async function fazerLogin() {
     });
     const data = await res.json();
     if (data.error || data.error_description) {
-      err.textContent = traduzirErro(data.error_description || data.error);
+      err.textContent = 'Utilizador ou password incorretos.';
       return;
     }
-
     currentUser = { id: data.user.id, access_token: data.access_token, username };
     localStorage.setItem('bemestar_session', JSON.stringify(currentUser));
     mostrarApp();
