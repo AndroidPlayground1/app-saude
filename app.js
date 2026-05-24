@@ -89,7 +89,7 @@ async function fazerSignup() {
       body: JSON.stringify({ user_id: data.user.id, username })
     });
 
-    currentUser = { ...data.user, access_token: data.access_token, username };
+    currentUser = { id: data.user.id, access_token: data.access_token, username };
     localStorage.setItem('bemestar_session', JSON.stringify(currentUser));
     mostrarApp();
   } catch(e) {
@@ -133,7 +133,7 @@ async function fazerLogin() {
       return;
     }
 
-    currentUser = { ...data.user, access_token: data.access_token, username };
+    currentUser = { id: data.user.id, access_token: data.access_token, username };
     localStorage.setItem('bemestar_session', JSON.stringify(currentUser));
     mostrarApp();
   } catch(e) {
