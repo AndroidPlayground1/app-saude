@@ -206,15 +206,31 @@ function hojeStr() { return new Date().toISOString().slice(0, 10); }
 
 async function guardarNaCloud(dados) {
   try {
+    // Primeiro tenta inserir
     const res = await supabaseFetch('/rest/v1/registos', {
       method: 'POST',
-      headers: {
-        'Prefer': 'resolution=merge-duplicates,return=minimal'
-      },
+      headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
       body: JSON.stringify({ user_id: currentUser.id, data: hojeStr(), ...dados })
     });
-    if (res.ok) { mostrarSave('Guardado ✓'); dadosAlterados = false; }
-    else mostrarSave('Erro ao guardar');
+
+    // Se der 409 (já existe), faz PATCH
+    if (res.status === 409) {
+      const res2 = await supabaseFetch(
+        `/rest/v1/registos?user_id=eq.${currentUser.id}&data=eq.${hojeStr()}`,
+        {
+          method: 'PATCH',
+          headers: { 'Prefer': 'return=minimal' },
+          body: JSON.stringify(dados)
+        }
+      );
+      if (res2.ok) { mostrarSave('Guardado ✓'); dadosAlterados = false; }
+      else mostrarSave('Erro ao guardar');
+    } else if (res.ok) {
+      mostrarSave('Guardado ✓');
+      dadosAlterados = false;
+    } else {
+      mostrarSave('Erro ao guardar');
+    }
   } catch {
     mostrarSave('Sem ligação');
   }
